@@ -5,6 +5,7 @@ export const color = {
   whiteTransparent: "rgba(255, 255, 255, 0.7)",
   blue: "#225DCC",
   blueLight: "#2976ff",
+  transparent: "transparent",
 };
 
 export const fontSize = {

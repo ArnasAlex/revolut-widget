@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled, { css } from "styled-components";
 import { color, fontSize } from "../styles";
 import { ExchangeRate } from "../types";
+import { AmountInput } from "./AmountInput";
 import { TotalAmount } from "./TotalAmount";
 import { UnitExchangeRate } from "./UnitExchangeRate";
 
@@ -45,14 +46,13 @@ export const Sign = styled.span`
   margin-right: 5px;
 `;
 
-export const Amount = styled.span``;
-
 export interface AccountProps {
   ccy: string;
   amount: string;
   totalAmount: string;
   base?: boolean;
   exchangeRate?: ExchangeRate;
+  onChange: (text: string) => void;
 }
 
 export function Account({
@@ -61,14 +61,23 @@ export function Account({
   amount,
   totalAmount,
   exchangeRate,
+  onChange,
 }: AccountProps) {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const handleClick = useCallback(() => {
+    const { current } = inputRef;
+    if (current) {
+      current.focus();
+    }
+  }, []);
+
   return (
-    <Wrapper base={base}>
+    <Wrapper base={base} onClick={handleClick}>
       <Row>
         <Currency>{ccy}</Currency>
         <AmountWrapper>
-          <Sign>{base ? "-" : "+"}</Sign>
-          <Amount>{amount}</Amount>
+          {amount.length > 0 && <Sign>{base ? "-" : "+"}</Sign>}
+          <AmountInput value={amount} onChange={onChange} inputRef={inputRef} />
         </AmountWrapper>
       </Row>
       <Row>
