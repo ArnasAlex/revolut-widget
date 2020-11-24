@@ -1,7 +1,7 @@
 # Revolut Currency Exchange Widget
 
-Demo widget that allows exchanging currencies between accounts.
-Tech Stack: React, TypeScript, Jest, Enzyme.
+Demo widget that allows exchanging currencies between accounts.  
+Tech Stack: React, TypeScript, Jest, Enzyme.  
 Boilerplate: create-react-app.
 
 ## Available Scripts
