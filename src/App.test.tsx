@@ -1,5 +1,6 @@
 import { shallow } from "enzyme";
 import React from "react";
+import { AccountProvider } from "./AccountContext";
 import { App } from "./App";
 import { Exchanger } from "./exchange";
 import {GlobalStyles} from './styles';
@@ -13,6 +14,11 @@ describe("App", () => {
   it("renders Exchanger", () => {
     const app = shallow(<App />);
     expect(app.find(Exchanger)).toHaveLength(1);
+  });
+
+  it("renders AccountProvider", () => {
+    const app = shallow(<App />);
+    expect(app.find(AccountProvider)).toHaveLength(1);
   });
 
   it("renders GlobalStyles", () => {

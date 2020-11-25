@@ -6,8 +6,8 @@ export interface UnitExchangeRateProps {
   data: ExchangeRate;
 }
 export function UnitExchangeRate({ data }: UnitExchangeRateProps) {
-  const text = `${getCcySymbol(data.baseCcy)}1 = ${getCcySymbol(
-    data.quoteCcy
+  const text = `${getCcySymbol(data.quoteCcy)}1 = ${getCcySymbol(
+    data.baseCcy
   )}${data.rate}`;
 
   return <div>{text}</div>;

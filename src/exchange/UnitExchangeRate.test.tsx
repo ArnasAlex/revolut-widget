@@ -17,6 +17,6 @@ describe("UnitExchangeRate", () => {
 
   it("renders text correctly", () => {
     const component = shallow(<UnitExchangeRate data={rateData} />);
-    expect(component.text()).toStrictEqual("€1 = £0.8");
+    expect(component.text()).toStrictEqual("£1 = €0.8");
   });
 });

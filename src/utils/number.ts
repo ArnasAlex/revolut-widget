@@ -34,3 +34,17 @@ export function parseAmountInput(amount: string) {
 
   return rounded;
 }
+
+export function subtractAmount(amount: string, subtraction: string) {
+  const amountNum = parseFloat(amount);
+  const deductionNum = parseFloat(subtraction);
+  const result = amountNum - deductionNum;
+  return round(result.toString());
+}
+
+export function addAmount(amount: string, addition: string) {
+  const amountNum = parseFloat(amount);
+  const deductionNum = parseFloat(addition);
+  const result = amountNum + deductionNum;
+  return round(result.toString());
+}

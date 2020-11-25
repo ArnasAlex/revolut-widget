@@ -1,4 +1,10 @@
-import { convertAmount, parseAmountInput, round } from "./number";
+import {
+  addAmount,
+  convertAmount,
+  parseAmountInput,
+  round,
+  subtractAmount,
+} from "./number";
 
 describe("utils", () => {
   describe("number", () => {
@@ -70,6 +76,20 @@ describe("utils", () => {
       it("allows only numbers", () => {
         const result = parseAmountInput("abc");
         expect(result).toStrictEqual("");
+      });
+    });
+
+    describe("subtractAmount", () => {
+      it("returns subtracted amount", () => {
+        const result = subtractAmount("20.5", "3");
+        expect(result).toStrictEqual("17.5");
+      });
+    });
+
+    describe("addAmount", () => {
+      it("returns added amount", () => {
+        const result = addAmount("20.5", "3");
+        expect(result).toStrictEqual("23.5");
       });
     });
   });

@@ -10,6 +10,7 @@ export const color = {
 
 export const fontSize = {
   big: "36",
+  base: '16',
   small: "14",
 };
 
