@@ -1,32 +1,36 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { ExchangeRate } from "../types";
+import { convertAmount, parseAmountInput } from "../utils/number";
 import { Account } from "./Account";
 
 const Wrapper = styled.div``;
+const exchangeRate: ExchangeRate = {
+  baseCcy: "GBP",
+  quoteCcy: "EUR",
+  rate: "0.74",
+};
 
 export function Exchanger() {
   const [baseAmount, setBaseAmount] = useState("");
   const [quoteAmount, setQuoteAmount] = useState("");
 
-  const exchangeRate: ExchangeRate = {
-    baseCcy: "GBP",
-    quoteCcy: "EUR",
-    rate: "0.74",
-  };
-
   const handleBaseAmountChange = useCallback(
     (text) => {
-      setBaseAmount(text);
+      const parsed = parseAmountInput(text);
+      setBaseAmount(parsed);
+      setQuoteAmount(convertAmount(parsed, exchangeRate.rate));
     },
-    [setBaseAmount]
+    [setBaseAmount, setQuoteAmount]
   );
 
   const handleQuoteAmountChange = useCallback(
     (text) => {
-      setQuoteAmount(text);
+      const parsed = parseAmountInput(text);
+      setQuoteAmount(parsed);
+      setBaseAmount(convertAmount(parsed, exchangeRate.rate, true));
     },
-    [setQuoteAmount]
+    [setQuoteAmount, setBaseAmount]
   );
 
   return (
