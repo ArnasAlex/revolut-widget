@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { AccountContext } from "../AccountContext";
 import { color } from "../styles";
 import { ExchangeRate } from "../types";
+import { getNextIndex, getPrevIndex } from "../utils/list";
 import { convertAmount, parseAmountInput } from "../utils/number";
 import { Account } from "./Account";
 import { Button } from "./Button";
@@ -13,6 +14,7 @@ const TopRow = styled.div`
   display: flex;
   background: ${color.blueLight};
   justify-content: space-between;
+  border-bottom: 1px solid ${color.whiteTransparent};
 `;
 
 const exchangeRate: ExchangeRate = {
@@ -22,11 +24,13 @@ const exchangeRate: ExchangeRate = {
 };
 
 export function Exchanger() {
-  const baseCcy = exchangeRate.baseCcy;
-  const quoteCcy = exchangeRate.quoteCcy;
   const { state: accounts, dispatch } = React.useContext(AccountContext);
   const [baseAmount, setBaseAmount] = useState("");
   const [quoteAmount, setQuoteAmount] = useState("");
+  const [baseAccountIdx, setBaseAccountIdx] = useState(0);
+  const [quoteAccountIdx, setQuoteAccountIdx] = useState(1);
+  const baseAccount = accounts[baseAccountIdx];
+  const quoteAccount = accounts[quoteAccountIdx];
 
   const handleBaseAmountChange = useCallback(
     (text) => {
@@ -52,14 +56,29 @@ export function Exchanger() {
     dispatch({
       type: "Convert",
       payload: {
-        base: { ccy: baseCcy, amount: baseAmount },
-        quote: { ccy: quoteCcy, amount: quoteAmount },
+        base: { ccy: baseAccount.ccy, amount: baseAmount },
+        quote: { ccy: quoteAccount.ccy, amount: quoteAmount },
       },
     });
-  }, [dispatch, baseCcy, baseAmount, quoteCcy, quoteAmount]);
+  }, [dispatch, baseAccount, quoteAccount, baseAmount, quoteAmount]);
 
-  const baseAccount = accounts.find((x) => x.ccy === baseCcy);
-  const quoteAccount = accounts.find((x) => x.ccy === quoteCcy);
+  const handleBaseAccountChange = useCallback(
+    (next?: boolean) => {
+      setBaseAccountIdx((cur) =>
+        next ? getNextIndex(accounts, cur) : getPrevIndex(accounts, cur)
+      );
+    },
+    [accounts, setBaseAccountIdx]
+  );
+
+  const handleQuoteAccountChange = useCallback(
+    (next?: boolean) => {
+      setQuoteAccountIdx((cur) =>
+        next ? getNextIndex(accounts, cur) : getPrevIndex(accounts, cur)
+      );
+    },
+    [accounts, setQuoteAccountIdx]
+  );
 
   return (
     <Wrapper>
@@ -71,17 +90,19 @@ export function Exchanger() {
       </TopRow>
       <Account
         base
-        ccy={baseCcy}
+        ccy={baseAccount.ccy}
         amount={baseAmount}
-        totalAmount={baseAccount ? baseAccount.amount : "0"}
-        onChange={handleBaseAmountChange}
+        totalAmount={baseAccount.amount}
+        onAmountChange={handleBaseAmountChange}
+        onAccountChange={handleBaseAccountChange}
       />
       <Account
-        ccy={quoteCcy}
+        ccy={quoteAccount.ccy}
         amount={quoteAmount}
-        totalAmount={quoteAccount ? quoteAccount.amount : "0"}
+        totalAmount={quoteAccount.amount}
         exchangeRate={exchangeRate}
-        onChange={handleQuoteAmountChange}
+        onAmountChange={handleQuoteAmountChange}
+        onAccountChange={handleQuoteAccountChange}
       />
     </Wrapper>
   );

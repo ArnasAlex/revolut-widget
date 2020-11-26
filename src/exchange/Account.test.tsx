@@ -2,32 +2,51 @@ import { shallow } from "enzyme";
 import React from "react";
 import { Account, Currency, Sign } from "./Account";
 import { AmountInput } from "./AmountInput";
+import { Button } from "./Button";
 import { TotalAmount } from "./TotalAmount";
 import { UnitExchangeRate } from "./UnitExchangeRate";
 
 describe("Account", () => {
   it("renders component", () => {
     const component = shallow(
-      <Account amount="10" ccy="EUR" totalAmount="120" onChange={jest.fn()} />
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
+      />
     );
     expect(component).toHaveLength(1);
   });
 
   it("renders AmountInput", () => {
-    const onChange = jest.fn();
+    const onAmountChange = jest.fn();
     const component = shallow(
-      <Account amount="10" ccy="EUR" totalAmount="120" onChange={onChange} />
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={onAmountChange}
+        onAccountChange={jest.fn()}
+      />
     );
 
     expect(component.find(AmountInput)).toHaveLength(1);
     const props = component.find(AmountInput).props();
     expect(props.value).toStrictEqual("10");
-    expect(props.onChange).toStrictEqual(onChange);
+    expect(props.onChange).toStrictEqual(onAmountChange);
   });
 
   it("renders currency of the account", () => {
     const component = shallow(
-      <Account amount="10" ccy="EUR" totalAmount="120" onChange={jest.fn()} />
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
+      />
     );
 
     expect(component.find(Currency)).toHaveLength(1);
@@ -36,7 +55,13 @@ describe("Account", () => {
 
   it("renders total amount of that currency account", () => {
     const component = shallow(
-      <Account amount="10" ccy="EUR" totalAmount="120" onChange={jest.fn()} />
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
+      />
     );
 
     expect(component.find(TotalAmount)).toHaveLength(1);
@@ -47,7 +72,13 @@ describe("Account", () => {
 
   it("renders + sign next to the amount when currency is not base", () => {
     const component = shallow(
-      <Account amount="10" ccy="EUR" totalAmount="120" onChange={jest.fn()} />
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
+      />
     );
 
     expect(component.find(Sign)).toHaveLength(1);
@@ -61,7 +92,8 @@ describe("Account", () => {
         amount="10"
         ccy="EUR"
         totalAmount="120"
-        onChange={jest.fn()}
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
       />
     );
 
@@ -71,7 +103,13 @@ describe("Account", () => {
 
   it("does not render sign next to the amount when amount is empty", () => {
     const component = shallow(
-      <Account amount="" ccy="EUR" totalAmount="120" onChange={jest.fn()} />
+      <Account
+        amount=""
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
+      />
     );
 
     expect(component.find(Sign)).toHaveLength(0);
@@ -84,7 +122,8 @@ describe("Account", () => {
         amount="10"
         ccy="EUR"
         totalAmount="120"
-        onChange={jest.fn()}
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
       />
     );
 
@@ -99,7 +138,8 @@ describe("Account", () => {
         amount="10"
         ccy="EUR"
         totalAmount="120"
-        onChange={jest.fn()}
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
       />
     );
 
@@ -108,16 +148,22 @@ describe("Account", () => {
     expect(props.data).toStrictEqual(exchangeRate);
   });
 
-  it("calls onChange when AmountInput changes", () => {
-    const onChange = jest.fn();
+  it("calls onAmountChange when AmountInput changes", () => {
+    const onAmountChange = jest.fn();
     const component = shallow(
-      <Account amount="10" ccy="EUR" totalAmount="120" onChange={onChange} />
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={onAmountChange}
+        onAccountChange={jest.fn()}
+      />
     );
 
     const props = component.find(AmountInput).props();
     props.onChange("changed");
 
-    expect(onChange).toBeCalledWith("changed");
+    expect(onAmountChange).toBeCalledWith("changed");
   });
 
   it("focuses AmountInput inputRef when clicking on Account Wrapper", () => {
@@ -125,10 +171,56 @@ describe("Account", () => {
     jest.spyOn(React, "useRef").mockReturnValueOnce({ current: { focus } });
 
     const component = shallow(
-      <Account amount="10" ccy="EUR" totalAmount="120" onChange={jest.fn()} />
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
+      />
     );
 
     component.simulate("click");
     expect(focus).toBeCalled();
+  });
+
+  it("calls onChangeAccount when clicking next button", () => {
+    const onAccountChange = jest.fn();
+    const component = shallow(
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={onAccountChange}
+      />
+    );
+
+    const nextButtonProps = component.find(Button).at(1).props();
+    expect(nextButtonProps.children).toStrictEqual("〉");
+
+    nextButtonProps.onClick!();
+
+    expect(onAccountChange).toBeCalledWith(true);
+  });
+
+  it("calls onChangeAccount when clicking previous button", () => {
+    const onAccountChange = jest.fn();
+    const component = shallow(
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={onAccountChange}
+      />
+    );
+
+    const prevButtonProps = component.find(Button).at(0).props();
+    expect(prevButtonProps.children).toStrictEqual("〈");
+
+    prevButtonProps.onClick!();
+
+    expect(onAccountChange).toBeCalledWith();
   });
 });

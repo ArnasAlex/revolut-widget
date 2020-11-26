@@ -23,7 +23,7 @@ describe("Exchanger", () => {
     const component = shallow(<Exchanger />);
     const props = component.find(Account).at(0).props();
 
-    props.onChange("10");
+    props.onAmountChange("10");
 
     const updatedProps = component.find(Account).at(0).props();
     expect(updatedProps.amount).toStrictEqual("10");
@@ -33,7 +33,7 @@ describe("Exchanger", () => {
     const component = shallow(<Exchanger />);
     const baseAcountProps = component.find(Account).at(0).props();
 
-    baseAcountProps.onChange("10");
+    baseAcountProps.onAmountChange("10");
 
     const quoteAccountProps = component.find(Account).at(1).props();
     expect(quoteAccountProps.amount).toStrictEqual("13.51");
@@ -43,7 +43,7 @@ describe("Exchanger", () => {
     const component = shallow(<Exchanger />);
     const props = component.find(Account).at(1).props();
 
-    props.onChange("55");
+    props.onAmountChange("55");
 
     const updatedProps = component.find(Account).at(1).props();
     expect(updatedProps.amount).toStrictEqual("55");
@@ -53,16 +53,13 @@ describe("Exchanger", () => {
     const component = shallow(<Exchanger />);
     const quoteAccountProps = component.find(Account).at(1).props();
 
-    quoteAccountProps.onChange("10");
+    quoteAccountProps.onAmountChange("10");
 
     const baseAccountProps = component.find(Account).at(0).props();
     expect(baseAccountProps.amount).toStrictEqual("7.4");
   });
 
   it("renders Exchange button with no onClick handler when base amount is empty", async () => {
-    const dispatch = jest.fn();
-    jest.spyOn(React, "useContext").mockReturnValue({ state: [], dispatch });
-
     const component = shallow(<Exchanger />);
 
     const props = component.find(Button).at(1).props();
@@ -72,10 +69,16 @@ describe("Exchanger", () => {
 
   it("renders Exchange button that calls convert action to AccountContext when clicked and base amount is not empty", async () => {
     const dispatch = jest.fn();
-    jest.spyOn(React, "useContext").mockReturnValue({ state: [], dispatch });
+    jest.spyOn(React, "useContext").mockReturnValue({
+      state: [
+        { ccy: "GBP", amount: "100" },
+        { ccy: "EUR", amount: "200" },
+      ],
+      dispatch,
+    });
     const component = shallow(<Exchanger />);
 
-    component.find(Account).at(0).props().onChange("10");
+    component.find(Account).at(0).props().onAmountChange("10");
 
     const props = component.find(Button).at(1).props();
     expect(typeof props.onClick).toStrictEqual("function");
@@ -95,5 +98,45 @@ describe("Exchanger", () => {
 
     const cancelButton = component.find(Button).at(0);
     expect(cancelButton.props().children).toStrictEqual("Cancel");
+  });
+
+  it("changes base Account when onChangeAccount is called", async () => {
+    jest.spyOn(React, "useContext").mockReturnValue({
+      state: [
+        { ccy: "GBP", amount: "100" },
+        { ccy: "EUR", amount: "200" },
+        { ccy: "USD", amount: "300" },
+      ],
+      dispatch: jest.fn(),
+    });
+    const component = shallow(<Exchanger />);
+    const baseAccountProps = () => component.find(Account).at(0).props();
+
+    expect(baseAccountProps().ccy).toStrictEqual("GBP");
+    expect(baseAccountProps().totalAmount).toStrictEqual("100");
+    baseAccountProps().onAccountChange();
+
+    expect(baseAccountProps().ccy).toStrictEqual("USD");
+    expect(baseAccountProps().totalAmount).toStrictEqual("300");
+  });
+
+  it("changes quote Account when onChangeAccount is called", async () => {
+    jest.spyOn(React, "useContext").mockReturnValue({
+      state: [
+        { ccy: "GBP", amount: "100" },
+        { ccy: "EUR", amount: "200" },
+        { ccy: "USD", amount: "300" },
+      ],
+      dispatch: jest.fn(),
+    });
+    const component = shallow(<Exchanger />);
+    const quoteAccountProps = () => component.find(Account).at(1).props();
+
+    expect(quoteAccountProps().ccy).toStrictEqual("EUR");
+    expect(quoteAccountProps().totalAmount).toStrictEqual("200");
+    quoteAccountProps().onAccountChange();
+
+    expect(quoteAccountProps().ccy).toStrictEqual("GBP");
+    expect(quoteAccountProps().totalAmount).toStrictEqual("100");
   });
 });

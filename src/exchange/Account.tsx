@@ -3,17 +3,22 @@ import styled, { css } from "styled-components";
 import { color, fontSize } from "../styles";
 import { ExchangeRate } from "../types";
 import { AmountInput } from "./AmountInput";
+import { Button } from "./Button";
 import { TotalAmount } from "./TotalAmount";
 import { UnitExchangeRate } from "./UnitExchangeRate";
 
 const Wrapper = styled.div<{ base?: boolean }>`
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   color: ${color.white};
   background: ${(props) => (props.base ? color.blueLight : color.blue)};
 `;
 
 const Row = styled.div`
   display: flex;
+`;
+
+const Navigation = styled(Row)`
+  justify-content: space-between;
 `;
 
 const BigText = styled.div`
@@ -52,7 +57,8 @@ export interface AccountProps {
   totalAmount: string;
   base?: boolean;
   exchangeRate?: ExchangeRate;
-  onChange: (text: string) => void;
+  onAmountChange: (text: string) => void;
+  onAccountChange: (next?: boolean) => void;
 }
 
 export function Account({
@@ -61,7 +67,8 @@ export function Account({
   amount,
   totalAmount,
   exchangeRate,
-  onChange,
+  onAmountChange,
+  onAccountChange,
 }: AccountProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const handleClick = useCallback(() => {
@@ -71,13 +78,25 @@ export function Account({
     }
   }, []);
 
+  const handleNext = useCallback(() => {
+    onAccountChange(true);
+  }, [onAccountChange]);
+
+  const handlePrev = useCallback(() => {
+    onAccountChange();
+  }, [onAccountChange]);
+
   return (
     <Wrapper base={base} onClick={handleClick}>
       <Row>
         <Currency>{ccy}</Currency>
         <AmountWrapper>
           {amount.length > 0 && <Sign>{base ? "-" : "+"}</Sign>}
-          <AmountInput value={amount} onChange={onChange} inputRef={inputRef} />
+          <AmountInput
+            value={amount}
+            onChange={onAmountChange}
+            inputRef={inputRef}
+          />
         </AmountWrapper>
       </Row>
       <Row>
@@ -90,6 +109,10 @@ export function Account({
           </UnitExchangeRateWrapper>
         )}
       </Row>
+      <Navigation>
+        <Button onClick={handlePrev}>〈</Button>
+        <Button onClick={handleNext}>〉</Button>
+      </Navigation>
     </Wrapper>
   );
 }
