@@ -1,9 +1,9 @@
 import { shallow } from "enzyme";
 import React from "react";
-import { AccountProvider } from "./AccountContext";
 import { App } from "./App";
+import { AppContextProvider } from "./AppContext";
 import { Exchanger } from "./exchange";
-import {GlobalStyles} from './styles';
+import { GlobalStyles } from "./styles";
 
 describe("App", () => {
   it("renders App component", () => {
@@ -16,9 +16,9 @@ describe("App", () => {
     expect(app.find(Exchanger)).toHaveLength(1);
   });
 
-  it("renders AccountProvider", () => {
+  it("renders AppContextProvider", () => {
     const app = shallow(<App />);
-    expect(app.find(AccountProvider)).toHaveLength(1);
+    expect(app.find(AppContextProvider)).toHaveLength(1);
   });
 
   it("renders GlobalStyles", () => {

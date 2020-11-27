@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { AccountProvider } from "./AccountContext";
+import { AppContextProvider } from "./AppContext";
 import { Exchanger } from "./exchange";
 import { GlobalStyles } from "./styles";
 
@@ -20,9 +20,9 @@ export function App() {
     <Wrapper>
       <GlobalStyles />
       <Content>
-        <AccountProvider>
+        <AppContextProvider>
           <Exchanger />
-        </AccountProvider>
+        </AppContextProvider>
       </Content>
     </Wrapper>
   );

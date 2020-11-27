@@ -61,7 +61,7 @@ export interface AccountProps {
   onAccountChange: (next?: boolean) => void;
 }
 
-export function Account({
+export const Account = React.memo(({
   base,
   ccy,
   amount,
@@ -69,7 +69,7 @@ export function Account({
   exchangeRate,
   onAmountChange,
   onAccountChange,
-}: AccountProps) {
+}: AccountProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const handleClick = useCallback(() => {
     const { current } = inputRef;
@@ -115,4 +115,4 @@ export function Account({
       </Navigation>
     </Wrapper>
   );
-}
+});

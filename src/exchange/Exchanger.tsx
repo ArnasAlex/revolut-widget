@@ -1,12 +1,12 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
-import { AccountContext } from "../AccountContext";
+import { AppContext } from "../AppContext";
 import { color } from "../styles";
-import { ExchangeRate } from "../types";
-import { getNextIndex, getPrevIndex } from "../utils/list";
-import { convertAmount, parseAmountInput } from "../utils/number";
+import { getCcyRate } from "../utils/api";
 import { Account } from "./Account";
 import { Button } from "./Button";
+
+const refreshRate = 10 * 1000;
 
 const Wrapper = styled.div``;
 
@@ -17,67 +17,67 @@ const TopRow = styled.div`
   border-bottom: 1px solid ${color.whiteTransparent};
 `;
 
-const exchangeRate: ExchangeRate = {
-  baseCcy: "GBP",
-  quoteCcy: "EUR",
-  rate: "0.74",
-};
-
 export function Exchanger() {
-  const { state: accounts, dispatch } = React.useContext(AccountContext);
-  const [baseAmount, setBaseAmount] = useState("");
-  const [quoteAmount, setQuoteAmount] = useState("");
-  const [baseAccountIdx, setBaseAccountIdx] = useState(0);
-  const [quoteAccountIdx, setQuoteAccountIdx] = useState(1);
+  const { state, dispatch } = React.useContext(AppContext);
+  const {
+    accounts,
+    baseAmount,
+    quoteAmount,
+    baseAccountIdx,
+    quoteAccountIdx,
+    rate,
+  } = state;
   const baseAccount = accounts[baseAccountIdx];
   const quoteAccount = accounts[quoteAccountIdx];
 
+  React.useEffect(() => {
+    if (baseAccount.ccy === quoteAccount.ccy) {
+      dispatch({ type: "RateChanged", payload: { rate: "1" } });
+      return;
+    }
+
+    let timeout: number;
+    const fetch = async () => {
+      const newRate = await getCcyRate(baseAccount.ccy, quoteAccount.ccy);
+      dispatch({ type: "RateChanged", payload: { rate: newRate } });
+      timeout = setTimeout(fetch, refreshRate);
+    };
+
+    fetch();
+
+    return () => clearTimeout(timeout);
+  }, [baseAccount.ccy, quoteAccount.ccy, dispatch]);
+
   const handleBaseAmountChange = useCallback(
     (text) => {
-      const parsed = parseAmountInput(text);
-      setBaseAmount(parsed);
-      setQuoteAmount(convertAmount(parsed, exchangeRate.rate, true));
+      dispatch({ type: "BaseAmountChanged", payload: { amount: text } });
     },
-    [setBaseAmount, setQuoteAmount]
+    [dispatch]
   );
 
   const handleQuoteAmountChange = useCallback(
     (text) => {
-      const parsed = parseAmountInput(text);
-      setQuoteAmount(parsed);
-      setBaseAmount(convertAmount(parsed, exchangeRate.rate));
+      dispatch({ type: "QuoteAmountChanged", payload: { amount: text } });
     },
-    [setQuoteAmount, setBaseAmount]
+    [dispatch]
   );
 
   const handleExchange = useCallback(() => {
-    setBaseAmount("");
-    setQuoteAmount("");
-    dispatch({
-      type: "Convert",
-      payload: {
-        base: { ccy: baseAccount.ccy, amount: baseAmount },
-        quote: { ccy: quoteAccount.ccy, amount: quoteAmount },
-      },
-    });
-  }, [dispatch, baseAccount, quoteAccount, baseAmount, quoteAmount]);
+    dispatch({ type: "Exchange", payload: {} });
+  }, [dispatch]);
 
   const handleBaseAccountChange = useCallback(
     (next?: boolean) => {
-      setBaseAccountIdx((cur) =>
-        next ? getNextIndex(accounts, cur) : getPrevIndex(accounts, cur)
-      );
+      dispatch({ type: "BaseAccountChanged", payload: { next } });
     },
-    [accounts, setBaseAccountIdx]
+    [dispatch]
   );
 
   const handleQuoteAccountChange = useCallback(
     (next?: boolean) => {
-      setQuoteAccountIdx((cur) =>
-        next ? getNextIndex(accounts, cur) : getPrevIndex(accounts, cur)
-      );
+      dispatch({ type: "QuoteAccountChanged", payload: { next } });
     },
-    [accounts, setQuoteAccountIdx]
+    [dispatch]
   );
 
   return (
@@ -100,7 +100,11 @@ export function Exchanger() {
         ccy={quoteAccount.ccy}
         amount={quoteAmount}
         totalAmount={quoteAccount.amount}
-        exchangeRate={exchangeRate}
+        exchangeRate={{
+          baseCcy: baseAccount.ccy,
+          quoteCcy: quoteAccount.ccy,
+          rate,
+        }}
         onAmountChange={handleQuoteAmountChange}
         onAccountChange={handleQuoteAccountChange}
       />
