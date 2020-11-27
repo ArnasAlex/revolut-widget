@@ -1,6 +1,6 @@
 import { shallow } from "enzyme";
 import React from "react";
-import { Account, Currency, Sign } from "./Account";
+import { Account, Currency, Sign, TotalAmountWrapper } from "./Account";
 import { AmountInput } from "./AmountInput";
 import { Button } from "./Button";
 import { TotalAmount } from "./TotalAmount";
@@ -68,6 +68,23 @@ describe("Account", () => {
     const props = component.find(TotalAmount).props();
     expect(props.amount).toStrictEqual("120");
     expect(props.ccy).toStrictEqual("EUR");
+    expect(component.find(TotalAmountWrapper).props().invalid).toBeUndefined();
+  });
+
+  it("renders total amount as invalid when invalid prop is provided", () => {
+    const component = shallow(
+      <Account
+        amount="10"
+        ccy="EUR"
+        totalAmount="120"
+        onAmountChange={jest.fn()}
+        onAccountChange={jest.fn()}
+        invalid
+      />
+    );
+
+    const props = component.find(TotalAmountWrapper).props();
+    expect(props.invalid).toStrictEqual(true);
   });
 
   it("renders + sign next to the amount when currency is not base", () => {

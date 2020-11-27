@@ -40,7 +40,16 @@ describe("Exchanger", () => {
     expect(baseProps.amount).toStrictEqual("20");
     expect(baseProps.totalAmount).toStrictEqual("100");
     expect(baseProps.ccy).toStrictEqual("EUR");
-    expect(baseProps.exchangeRate).toStrictEqual(undefined);
+    expect(baseProps.exchangeRate).toBeUndefined();
+    expect(baseProps.invalid).toStrictEqual(false);
+  });
+
+  it("renders base ccy Account component as invalid when total amount is smaller than amount inputed", () => {
+    mockAppContext({ baseAmount: "9000" });
+    const component = shallow(<Exchanger />);
+
+    const baseProps = component.find(Account).at(0).props();
+    expect(baseProps.invalid).toStrictEqual(true);
   });
 
   it("renders quote ccy Account component", () => {
@@ -48,7 +57,7 @@ describe("Exchanger", () => {
     const component = shallow(<Exchanger />);
 
     const quoteProps = component.find(Account).at(1).props();
-    expect(quoteProps.base).toStrictEqual(undefined);
+    expect(quoteProps.base).toBeUndefined();
     expect(quoteProps.amount).toStrictEqual("17");
     expect(quoteProps.totalAmount).toStrictEqual("200");
     expect(quoteProps.ccy).toStrictEqual("USD");
@@ -70,7 +79,7 @@ describe("Exchanger", () => {
       rate: "1.2421",
     });
 
-    expect(rateProps.rounded).toStrictEqual(undefined);
+    expect(rateProps.rounded).toBeUndefined();
   });
 
   it("dispatches BaseAmountChanged action when base Account onAmountChange is called", async () => {
@@ -109,7 +118,16 @@ describe("Exchanger", () => {
 
     const props = component.find(Button).at(1).props();
     expect(props.children).toStrictEqual("Exchange");
-    expect(props.onClick).toStrictEqual(undefined);
+    expect(props.onClick).toBeUndefined();
+  });
+
+  it("renders Exchange button with no onClick handler when base ccy total amount is smaller than amount input", async () => {
+    mockAppContext({ baseAmount: "50000" });
+    const component = shallow(<Exchanger />);
+
+    const props = component.find(Button).at(1).props();
+    expect(props.children).toStrictEqual("Exchange");
+    expect(props.onClick).toBeUndefined();
   });
 
   it("dispatches Exchange action when Exchange button is clicked", async () => {

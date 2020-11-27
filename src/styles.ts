@@ -6,6 +6,7 @@ export const color = {
   blue: "#225DCC",
   blueLight: "#2976ff",
   transparent: "transparent",
+  red: "#FF9999",
 };
 
 export const fontSize = {

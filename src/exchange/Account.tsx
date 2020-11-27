@@ -28,7 +28,10 @@ const BigText = styled.div`
 
 const SmallText = styled.div`
   font-size: ${fontSize.small}px;
-  color: ${color.whiteTransparent};
+`;
+
+export const TotalAmountWrapper = styled(SmallText)<{ invalid?: boolean }>`
+  color: ${(props) => (props.invalid ? color.red : color.whiteTransparent)};
 `;
 
 export const Currency = styled(BigText)``;
@@ -57,6 +60,7 @@ export interface AccountProps {
   totalAmount: string;
   base?: boolean;
   exchangeRate?: ExchangeRate;
+  invalid?: boolean;
   onAmountChange: (text: string) => void;
   onAccountChange: (next?: boolean) => void;
 }
@@ -68,6 +72,7 @@ export const Account = React.memo(
     amount,
     totalAmount,
     exchangeRate,
+    invalid,
     onAmountChange,
     onAccountChange,
   }: AccountProps) => {
@@ -101,9 +106,9 @@ export const Account = React.memo(
           </AmountWrapper>
         </Row>
         <Row>
-          <SmallText>
+          <TotalAmountWrapper invalid={invalid}>
             <TotalAmount ccy={ccy} amount={totalAmount} />
-          </SmallText>
+          </TotalAmountWrapper>
           {exchangeRate && (
             <UnitExchangeRateWrapper>
               <UnitExchangeRate data={exchangeRate} rounded />

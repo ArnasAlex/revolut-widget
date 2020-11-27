@@ -108,6 +108,10 @@ export function Exchanger() {
     [quoteAccount, baseAccount, rate]
   );
 
+  const amountValid =
+    parseFloat(baseAccount.amount) >=
+    parseFloat(baseAmount ? baseAmount : "0");
+
   return (
     <Wrapper>
       <TopRow>
@@ -115,7 +119,11 @@ export function Exchanger() {
         <UnitExchangeRateWrapper>
           <UnitExchangeRate data={exchangeRate} />
         </UnitExchangeRateWrapper>
-        <Button onClick={baseAmount.length > 0 ? handleExchange : undefined}>
+        <Button
+          onClick={
+            baseAmount.length > 0 && amountValid ? handleExchange : undefined
+          }
+        >
           Exchange
         </Button>
       </TopRow>
@@ -126,6 +134,7 @@ export function Exchanger() {
         totalAmount={baseAccount.amount}
         onAmountChange={handleBaseAmountChange}
         onAccountChange={handleBaseAccountChange}
+        invalid={!amountValid}
       />
       <Account
         ccy={quoteAccount.ccy}
