@@ -77,6 +77,21 @@ describe("utils", () => {
         const result = parseAmountInput("abc");
         expect(result).toStrictEqual("");
       });
+
+      it("allows leading zero", () => {
+        const result = parseAmountInput("12.0");
+        expect(result).toStrictEqual("12.0");
+      });
+
+      it("allows two leading zeros", () => {
+        const result = parseAmountInput("12.00");
+        expect(result).toStrictEqual("12.00");
+      });
+
+      it("does not allow three leading zeros", () => {
+        const result = parseAmountInput("12.000");
+        expect(result).toStrictEqual("12.00");
+      });
     });
 
     describe("subtractAmount", () => {

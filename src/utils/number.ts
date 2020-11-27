@@ -27,9 +27,17 @@ export function parseAmountInput(amount: string) {
     return "";
   }
 
-  const rounded = round(num.toString());
-  if (text[text.length - 1] === ".") {
-    return rounded + ".";
+  let rounded = round(num.toString());
+  const split = text.split(".");
+  if (split.length > 1) {
+    if (!rounded.includes(".")) {
+      rounded += ".";
+    }
+
+    const twoDecimalPlaces = split[1].substr(0, 2);
+    if (["0", "00"].includes(twoDecimalPlaces)) {
+      rounded += twoDecimalPlaces;
+    }
   }
 
   return rounded;
