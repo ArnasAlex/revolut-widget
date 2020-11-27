@@ -205,7 +205,7 @@ function baseAmountChangedReducer(
   return {
     ...state,
     baseAmount: baseAmount,
-    quoteAmount: convertAmount(baseAmount, state.rate, true),
+    quoteAmount: convertAmount(baseAmount, state.rate),
     baseActive: true,
   };
 }
@@ -218,7 +218,7 @@ function quoteAmountChangedReducer(
   return {
     ...state,
     quoteAmount: quoteAmount,
-    baseAmount: convertAmount(quoteAmount, state.rate),
+    baseAmount: convertAmount(quoteAmount, state.rate, true),
     baseActive: false,
   };
 }
@@ -235,9 +235,9 @@ function rateChangedReducer(
   let { baseAmount, quoteAmount, baseActive } = state;
 
   if (baseActive) {
-    quoteAmount = convertAmount(baseAmount, rate, true);
+    quoteAmount = convertAmount(baseAmount, rate);
   } else {
-    baseAmount = convertAmount(quoteAmount, rate);
+    baseAmount = convertAmount(quoteAmount, rate, true);
   }
 
   return { ...state, rate: rate, baseAmount, quoteAmount };

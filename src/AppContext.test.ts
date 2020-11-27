@@ -35,7 +35,7 @@ describe("AppContext", () => {
       expect(result).toStrictEqual({
         ...state,
         rate: "2",
-        quoteAmount: "5",
+        quoteAmount: "20",
       });
     });
 
@@ -55,7 +55,7 @@ describe("AppContext", () => {
       expect(result).toStrictEqual({
         ...state,
         rate: "2",
-        baseAmount: "26",
+        baseAmount: "6.5",
       });
     });
 
@@ -147,7 +147,7 @@ describe("AppContext", () => {
       expect(result).toStrictEqual({
         ...state,
         baseAmount: "10",
-        quoteAmount: "5",
+        quoteAmount: "20",
         baseActive: true,
       });
     });
@@ -166,7 +166,7 @@ describe("AppContext", () => {
 
       expect(result).toStrictEqual({
         ...state,
-        baseAmount: "20",
+        baseAmount: "5",
         quoteAmount: "10",
         baseActive: false,
       });
