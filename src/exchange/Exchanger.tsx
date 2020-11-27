@@ -1,14 +1,24 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { AppContext } from "../AppContext";
 import { color } from "../styles";
 import { getCcyRate } from "../utils/api";
+import { invertRate, round } from "../utils/number";
 import { Account } from "./Account";
 import { Button } from "./Button";
+import { UnitExchangeRate } from "./UnitExchangeRate";
 
 const refreshRate = 10 * 1000;
 
 const Wrapper = styled.div``;
+
+const UnitExchangeRateWrapper = styled.div`
+  color: ${color.white};
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const TopRow = styled.div`
   display: flex;
@@ -80,10 +90,31 @@ export function Exchanger() {
     [dispatch]
   );
 
+  const exchangeRate = useMemo(
+    () => ({
+      baseCcy: quoteAccount.ccy,
+      quoteCcy: baseAccount.ccy,
+      rate: round(rate, 4),
+    }),
+    [quoteAccount, baseAccount, rate]
+  );
+
+  const exchangeRateInverted = useMemo(
+    () => ({
+      baseCcy: baseAccount.ccy,
+      quoteCcy: quoteAccount.ccy,
+      rate: invertRate(rate),
+    }),
+    [quoteAccount, baseAccount, rate]
+  );
+
   return (
     <Wrapper>
       <TopRow>
         <Button>Cancel</Button>
+        <UnitExchangeRateWrapper>
+          <UnitExchangeRate data={exchangeRate} />
+        </UnitExchangeRateWrapper>
         <Button onClick={baseAmount.length > 0 ? handleExchange : undefined}>
           Exchange
         </Button>
@@ -100,11 +131,7 @@ export function Exchanger() {
         ccy={quoteAccount.ccy}
         amount={quoteAmount}
         totalAmount={quoteAccount.amount}
-        exchangeRate={{
-          baseCcy: baseAccount.ccy,
-          quoteCcy: quoteAccount.ccy,
-          rate,
-        }}
+        exchangeRate={exchangeRateInverted}
         onAmountChange={handleQuoteAmountChange}
         onAccountChange={handleQuoteAccountChange}
       />

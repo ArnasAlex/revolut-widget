@@ -130,7 +130,7 @@ describe("Account", () => {
     expect(component.find(UnitExchangeRate)).toHaveLength(0);
   });
 
-  it("renders exchange rate when exchangeRate prop is provided", () => {
+  it("renders rounded exchange rate when exchangeRate prop is provided", () => {
     const exchangeRate = { baseCcy: "EUR", quoteCcy: "USD", rate: "1.5" };
     const component = shallow(
       <Account
@@ -146,6 +146,7 @@ describe("Account", () => {
     expect(component.find(UnitExchangeRate)).toHaveLength(1);
     const props = component.find(UnitExchangeRate).props();
     expect(props.data).toStrictEqual(exchangeRate);
+    expect(props.rounded).toStrictEqual(true);
   });
 
   it("calls onAmountChange when AmountInput changes", () => {

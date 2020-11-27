@@ -3,6 +3,7 @@ import { getNextIndex, getPrevIndex } from "./utils/list";
 import {
   addAmount,
   convertAmount,
+  invertRate,
   parseAmountInput,
   subtractAmount,
 } from "./utils/number";
@@ -218,7 +219,7 @@ function quoteAmountChangedReducer(
   return {
     ...state,
     quoteAmount: quoteAmount,
-    baseAmount: convertAmount(quoteAmount, state.rate, true),
+    baseAmount: convertAmount(quoteAmount, invertRate(state.rate)),
     baseActive: false,
   };
 }
@@ -237,7 +238,7 @@ function rateChangedReducer(
   if (baseActive) {
     quoteAmount = convertAmount(baseAmount, rate);
   } else {
-    baseAmount = convertAmount(quoteAmount, rate, true);
+    baseAmount = convertAmount(quoteAmount, invertRate(rate));
   }
 
   return { ...state, rate: rate, baseAmount, quoteAmount };

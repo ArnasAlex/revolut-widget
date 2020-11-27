@@ -61,58 +61,60 @@ export interface AccountProps {
   onAccountChange: (next?: boolean) => void;
 }
 
-export const Account = React.memo(({
-  base,
-  ccy,
-  amount,
-  totalAmount,
-  exchangeRate,
-  onAmountChange,
-  onAccountChange,
-}: AccountProps) => {
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const handleClick = useCallback(() => {
-    const { current } = inputRef;
-    if (current) {
-      current.focus();
-    }
-  }, []);
+export const Account = React.memo(
+  ({
+    base,
+    ccy,
+    amount,
+    totalAmount,
+    exchangeRate,
+    onAmountChange,
+    onAccountChange,
+  }: AccountProps) => {
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const handleClick = useCallback(() => {
+      const { current } = inputRef;
+      if (current) {
+        current.focus();
+      }
+    }, []);
 
-  const handleNext = useCallback(() => {
-    onAccountChange(true);
-  }, [onAccountChange]);
+    const handleNext = useCallback(() => {
+      onAccountChange(true);
+    }, [onAccountChange]);
 
-  const handlePrev = useCallback(() => {
-    onAccountChange();
-  }, [onAccountChange]);
+    const handlePrev = useCallback(() => {
+      onAccountChange();
+    }, [onAccountChange]);
 
-  return (
-    <Wrapper base={base} onClick={handleClick}>
-      <Row>
-        <Currency>{ccy}</Currency>
-        <AmountWrapper>
-          {amount.length > 0 && <Sign>{base ? "-" : "+"}</Sign>}
-          <AmountInput
-            value={amount}
-            onChange={onAmountChange}
-            inputRef={inputRef}
-          />
-        </AmountWrapper>
-      </Row>
-      <Row>
-        <SmallText>
-          <TotalAmount ccy={ccy} amount={totalAmount} />
-        </SmallText>
-        {exchangeRate && (
-          <UnitExchangeRateWrapper>
-            <UnitExchangeRate data={exchangeRate} />
-          </UnitExchangeRateWrapper>
-        )}
-      </Row>
-      <Navigation>
-        <Button onClick={handlePrev}>〈</Button>
-        <Button onClick={handleNext}>〉</Button>
-      </Navigation>
-    </Wrapper>
-  );
-});
+    return (
+      <Wrapper base={base} onClick={handleClick}>
+        <Row>
+          <Currency>{ccy}</Currency>
+          <AmountWrapper>
+            {amount.length > 0 && <Sign>{base ? "-" : "+"}</Sign>}
+            <AmountInput
+              value={amount}
+              onChange={onAmountChange}
+              inputRef={inputRef}
+            />
+          </AmountWrapper>
+        </Row>
+        <Row>
+          <SmallText>
+            <TotalAmount ccy={ccy} amount={totalAmount} />
+          </SmallText>
+          {exchangeRate && (
+            <UnitExchangeRateWrapper>
+              <UnitExchangeRate data={exchangeRate} rounded />
+            </UnitExchangeRateWrapper>
+          )}
+        </Row>
+        <Navigation>
+          <Button onClick={handlePrev}>〈</Button>
+          <Button onClick={handleNext}>〉</Button>
+        </Navigation>
+      </Wrapper>
+    );
+  }
+);

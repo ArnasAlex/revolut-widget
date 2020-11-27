@@ -1,20 +1,26 @@
-export function round(amount: string): string {
+const defaultPrecision = 2;
+
+export function round(amount: string, precision = defaultPrecision): string {
   const num = parseFloat(amount);
-  return parseFloat(num.toFixed(2)).toString();
+  return parseFloat(num.toFixed(precision)).toString();
+}
+
+export function invertRate(rate: string) {
+  const rateNum = parseFloat(rate);
+  const inverted = 1 / rateNum;
+  return inverted.toString();
 }
 
 export function convertAmount(
   amount: string,
   rate: string,
-  invertRate?: boolean
 ): string {
   if (amount === "" || rate === "") {
     return "";
   }
 
   const rateNum = parseFloat(rate);
-  const normalizedRate = invertRate ? 1 / rateNum : rateNum;
-  const num = parseFloat(amount) * normalizedRate;
+  const num = parseFloat(amount) * rateNum;
 
   return round(num.toString());
 }
@@ -34,7 +40,7 @@ export function parseAmountInput(amount: string) {
       rounded += ".";
     }
 
-    const twoDecimalPlaces = split[1].substr(0, 2);
+    const twoDecimalPlaces = split[1].substr(0, defaultPrecision);
     if (["0", "00"].includes(twoDecimalPlaces)) {
       rounded += twoDecimalPlaces;
     }

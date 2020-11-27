@@ -19,4 +19,34 @@ describe("UnitExchangeRate", () => {
     const component = shallow(<UnitExchangeRate data={rateData} />);
     expect(component.text()).toStrictEqual("£1 = €0.8");
   });
+
+  it("renders '...' when rate is 0 when rate is not loaded", () => {
+    const component = shallow(
+      <UnitExchangeRate data={{ ...rateData, rate: "0" }} />
+    );
+
+    expect(component.text()).toStrictEqual("...");
+  });
+
+  it("renders '...' when rate is Infinity when rate is not loaded", () => {
+    const component = shallow(
+      <UnitExchangeRate data={{ ...rateData, rate: "Infinity" }} />
+    );
+
+    expect(component.text()).toStrictEqual("...");
+  });
+
+  it("shows only two decimal places when rounded is true", () => {
+    const component = shallow(
+      <UnitExchangeRate data={{ ...rateData, rate: "0.8232111" }} rounded />
+    );
+    expect(component.text()).toStrictEqual("£1 = €0.82");
+  });
+
+  it("shows all decimal places when rounded is undefined", () => {
+    const component = shallow(
+      <UnitExchangeRate data={{ ...rateData, rate: "0.8232111" }} />
+    );
+    expect(component.text()).toStrictEqual("£1 = €0.8232111");
+  });
 });

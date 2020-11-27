@@ -1,6 +1,7 @@
 import {
   addAmount,
   convertAmount,
+  invertRate,
   parseAmountInput,
   round,
   subtractAmount,
@@ -9,7 +10,7 @@ import {
 describe("utils", () => {
   describe("number", () => {
     describe("round", () => {
-      it("returns rounded number to two decimal places", () => {
+      it("returns rounded number to two decimal places by default", () => {
         const result = round("100.4232");
         expect(result).toStrictEqual("100.42");
       });
@@ -17,6 +18,28 @@ describe("utils", () => {
       it("does not add leading zeros", () => {
         const result = round("100.00");
         expect(result).toStrictEqual("100");
+      });
+
+      it("returns rounded number to specified decimal places", () => {
+        const result = round("100.121314", 4);
+        expect(result).toStrictEqual("100.1213");
+      });
+    });
+
+    describe("invertRate", () => {
+      it("returns inverted rate", () => {
+        const result = invertRate("2");
+        expect(result).toStrictEqual("0.5");
+      });
+
+      it("returns Infinity when rate is 0", () => {
+        const result = invertRate("0");
+        expect(result).toStrictEqual("Infinity");
+      });
+
+      it("returns 0 when rate is Infinity", () => {
+        const result = invertRate("Infinity");
+        expect(result).toStrictEqual("0");
       });
     });
 

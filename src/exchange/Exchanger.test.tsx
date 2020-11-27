@@ -5,6 +5,7 @@ import * as api from "../utils/api";
 import { Account } from "./Account";
 import { Button } from "./Button";
 import { Exchanger } from "./Exchanger";
+import { UnitExchangeRate } from "./UnitExchangeRate";
 
 describe("Exchanger", () => {
   function mockAppContext(state: Partial<AppState> = {}) {
@@ -30,9 +31,46 @@ describe("Exchanger", () => {
     expect(component).toHaveLength(1);
   });
 
-  it("renders two Account components for base and quote currencies", () => {
+  it("renders base ccy Account component", () => {
+    mockAppContext({ baseAmount: "20" });
     const component = shallow(<Exchanger />);
-    expect(component.find(Account)).toHaveLength(2);
+
+    const baseProps = component.find(Account).at(0).props();
+    expect(baseProps.base).toStrictEqual(true);
+    expect(baseProps.amount).toStrictEqual("20");
+    expect(baseProps.totalAmount).toStrictEqual("100");
+    expect(baseProps.ccy).toStrictEqual("EUR");
+    expect(baseProps.exchangeRate).toStrictEqual(undefined);
+  });
+
+  it("renders quote ccy Account component", () => {
+    mockAppContext({ quoteAmount: "17", rate: "2" });
+    const component = shallow(<Exchanger />);
+
+    const quoteProps = component.find(Account).at(1).props();
+    expect(quoteProps.base).toStrictEqual(undefined);
+    expect(quoteProps.amount).toStrictEqual("17");
+    expect(quoteProps.totalAmount).toStrictEqual("200");
+    expect(quoteProps.ccy).toStrictEqual("USD");
+    expect(quoteProps.exchangeRate).toStrictEqual({
+      baseCcy: "EUR",
+      quoteCcy: "USD",
+      rate: "0.5",
+    });
+  });
+
+  it("renders UnitExchangeRate component", () => {
+    mockAppContext({ rate: "1.242144" });
+    const component = shallow(<Exchanger />);
+
+    const rateProps = component.find(UnitExchangeRate).props();
+    expect(rateProps.data).toStrictEqual({
+      baseCcy: "USD",
+      quoteCcy: "EUR",
+      rate: "1.2421",
+    });
+
+    expect(rateProps.rounded).toStrictEqual(undefined);
   });
 
   it("dispatches BaseAmountChanged action when base Account onAmountChange is called", async () => {
